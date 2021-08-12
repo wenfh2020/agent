@@ -1,0 +1,15 @@
+base:
+  log: ./conf/log.xml
+  maxproc: 1
+
+net:
+  http:
+    addrs: tcp@0.0.0.0:7172
+    read_time_out: 5s
+    write_time_out: 5s
+
+mysql:
+  mysql_lhl_product:
+    url: root:root123!@#@tcp(127.0.0.1:3306)/lhl_product?parseTime=True&loc=Local&multiStatements=true&charset=utf8&timeout=20s
+    max-idle-conn: 2
+    max-open-conn: 2
