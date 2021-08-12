@@ -151,9 +151,9 @@ func AgentCheck(w http.ResponseWriter, r *http.Request) {
 		log.Info("activation: %v", actmd5)
 
 		/* aes encrypt. */
-		macEncrypt, _ := common.AesCBCEncrypt([]byte(actmd5), []byte(aesKey))
+		encrypt, _ := common.AesCBCEncrypt([]byte(actmd5), []byte(aesKey))
 		/* base64 encode. */
-		activation = common.Base64Encode(string(macEncrypt))
+		activation = common.Base64Encode(string(encrypt))
 
 		/* update db activation. */
 		tx := db.Begin()
@@ -176,15 +176,15 @@ func AgentCheck(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		/* aes encrypt. */
-		macEncrypt, _ := common.AesCBCEncrypt([]byte(activation), []byte(aesKey))
+		encrypt, _ := common.AesCBCEncrypt([]byte(activation), []byte(aesKey))
 		/* base64 encode. */
-		activation = common.Base64Encode(string(macEncrypt))
+		activation = common.Base64Encode(string(encrypt))
 	}
 
 	now := time.Now()
 	time2 := now.Format("2006-01-02 15:04:05")
-	macEncrypt, _ := common.AesCBCEncrypt([]byte(mac), []byte(aesKey))
-	mac = common.Base64Encode(string(macEncrypt))
+	encrypt, _ := common.AesCBCEncrypt([]byte(mac), []byte(aesKey))
+	mac = common.Base64Encode(string(encrypt))
 	sign = common.SignEncode(salt, mac, time2)
 
 	ack.Activation = activation

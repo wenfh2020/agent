@@ -30,12 +30,6 @@ func main() {
 	mac = common.Base64Encode(string(macEncrypt))
 	fmt.Printf("base64 encode str: %s\n", mac)
 
-	/* aes decrypt */
-	// macDecrypt, _ := common.AesCBCDecrypt(macEncrypt, []byte(aesKey))
-	// fmt.Println(string(macDecrypt))
-
-	// return
-
 	/* digital signature */
 	sign := common.SignEncode(salt, mac, time)
 
