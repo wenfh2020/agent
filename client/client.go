@@ -6,6 +6,7 @@ import (
 	"agent/proto"
 	"bytes"
 	"encoding/json"
+
 	// "errors"
 	"fmt"
 	"io/ioutil"
@@ -67,6 +68,11 @@ func main() {
 	/* check response. */
 	if err = json.Unmarshal(bytes, &ack); err != nil {
 		fmt.Println(err)
+	}
+
+	if ack.Errno != 0 {
+		fmt.Printf("errno: %v, errstr: %v\n", ack.Errno, ack.Errstr)
+		return
 	}
 
 	/* check sign. */
