@@ -1,12 +1,11 @@
-package db
+package mysql
 
 /* go test mysql_test.go
  * go test mysql_test.go -v -run TestDbUpdate
  */
 
 import (
-	"agent/db"
-	"agent/proto"
+	mysql "agent/db"
 	"testing"
 	"time"
 
@@ -15,9 +14,9 @@ import (
 )
 
 func initDb() error {
-	db.InitDbMgr()
+	mysql.InitDbMgr()
 	config := viper.Sub("mysql.mysql_lhl_product")
-	return db.AddDbInfo("mysql_lhl_product", config.GetString("url"),
+	return mysql.AddDbInfo("mysql_lhl_product", config.GetString("url"),
 		config.GetInt("max_idle_conn"), config.GetInt("max_open_conn"))
 }
 
@@ -35,7 +34,7 @@ func getDB(name string) (*gorm.DB, error) {
 		return nil, err
 	}
 
-	db, err := db.GetDB("mysql_lhl_product")
+	db, err := mysql.GetDB("mysql_lhl_product")
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +48,7 @@ func TestDbInsert(t *testing.T) {
 		t.Errorf("get db failed! err: %v", err)
 	}
 
-	info := &proto.DbDeviceInfo{
+	info := &mysql.DeviceInfo{
 		DeviceMac:     "AX-XX-XX-XX-XX-XX",
 		DeviceVersion: "fdausfhuwhrw",
 		Activation:    "fksurhuiwydjsf",
@@ -72,7 +71,7 @@ func TestDbUpdate(t *testing.T) {
 		t.Errorf("get db failed! err: %v", err)
 	}
 
-	var info proto.DbDeviceInfo
+	var info mysql.DeviceInfo
 	device := "XX-XX-XX-XX-XX-XX"
 	tx := db.Begin()
 
@@ -99,7 +98,7 @@ func TestDbSelect(t *testing.T) {
 		t.Errorf("get db failed! err: %v", err)
 	}
 
-	var info proto.DbDeviceInfo
+	var info mysql.DeviceInfo
 	device := "XX-XX-XX-XX-XX-XX"
 
 	if err = db.Where("device_mac = ?", device).Find(&info).Error; err != nil {

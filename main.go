@@ -2,7 +2,7 @@ package main
 
 import (
 	"agent/common"
-	"agent/db"
+	mysql "agent/db"
 	"agent/inet"
 	"agent/proto"
 	"net/http"
@@ -18,9 +18,9 @@ func initConfig() error {
 }
 
 func initDb() error {
-	db.InitDbMgr()
+	mysql.InitDbMgr()
 	config := viper.Sub("mysql.mysql_lhl_product")
-	return db.AddDbInfo("mysql_lhl_product", config.GetString("url"),
+	return mysql.AddDbInfo("mysql_lhl_product", config.GetString("url"),
 		config.GetInt("max_idle_conn"), config.GetInt("max_open_conn"))
 }
 
