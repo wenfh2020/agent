@@ -78,11 +78,11 @@ func AgentCheck(w http.ResponseWriter, r *http.Request) {
 	}
 
 	/* base64 decode. */
-	b64data, _ := common.Base64Decode(mac)
+	decode, _ := common.Base64Decode(mac)
 
 	/* aes decrypt mac. */
-	macDecrypt, _ := common.AesCBCDecrypt([]byte(b64data), []byte(aesKey))
-	mac = string(macDecrypt)
+	decrypt, _ := common.AesCBCDecrypt([]byte(decode), []byte(aesKey))
+	mac = string(decrypt)
 
 	log.Debug("decrypt mac str: %v", string(mac))
 
@@ -112,8 +112,8 @@ func AgentCheck(w http.ResponseWriter, r *http.Request) {
 	/* check activation */
 	if len(activation) == 0 {
 		/* generate activation, it's md5 data. */
-		activation = fmt.Sprintf("%s+%s", mac, salt)
-		actmd5 := fmt.Sprintf("%x", common.Md5String(activation))
+		format := fmt.Sprintf("%s+%s", mac, salt)
+		actmd5 := fmt.Sprintf("%x", common.Md5String(format))
 		log.Info("activation: %v", actmd5)
 
 		/* aes encrypt. */
@@ -123,19 +123,14 @@ func AgentCheck(w http.ResponseWriter, r *http.Request) {
 
 		/* update db activation. */
 		tx := db.Begin()
-
 		update := map[string]interface{}{
 			"activation": actmd5,
 		}
-
-		err = tx.Model(&info).Where("device_mac = ?", mac).Updates(update).Error
-		if err != nil {
+		if err = tx.Model(&info).Where("device_mac = ?", mac).Updates(update).Error; err != nil {
 			errno = common.ERR_DB_UPDATE_FAILED
 			return
 		}
-
-		err = tx.Commit().Error
-		if err != nil {
+		if err = tx.Commit().Error; err != nil {
 			tx.Rollback()
 			errno = common.ERR_DB_UPDATE_FAILED
 			return
