@@ -12,7 +12,19 @@ import (
 	log "github.com/thinkboy/log4go"
 )
 
-func initHTTP() (err error) {
+func initConfig() error {
+	viper.SetConfigFile("./conf/config.yml")
+	return viper.ReadInConfig()
+}
+
+func initDb() error {
+	db.InitDbMgr()
+	config := viper.Sub("mysql.mysql_lhl_product")
+	return db.AddDbInfo("mysql_lhl_product", config.GetString("url"),
+		config.GetInt("max_idle_conn"), config.GetInt("max_open_conn"))
+}
+
+func initHTTP() error {
 	log.Trace("InitHTTP %v", viper.GetString("net.http.addrs"))
 
 	httpServerMux := http.NewServeMux()
@@ -23,23 +35,11 @@ func initHTTP() (err error) {
 	network, addr, err := inet.ParseNetwork(viper.GetString("net.http.addrs"))
 	if err != nil {
 		log.Error("ParseNetwork() error(%v)", err)
-		return
+		return err
 	}
 
 	go inet.HttpListen(httpServerMux, network, addr)
-	return
-}
-
-func initDb() error {
-	db.InitDbMgr()
-	config := viper.Sub("mysql.mysql_lhl_product")
-	return db.AddDbInfo("mysql_lhl_product", config.GetString("url"),
-		config.GetInt("max_idle_conn"), config.GetInt("max_open_conn"))
-}
-
-func initConfig() error {
-	viper.SetConfigFile("./conf/config.yml")
-	return viper.ReadInConfig()
+	return nil
 }
 
 func main() {
@@ -48,6 +48,7 @@ func main() {
 	}
 
 	runtime.GOMAXPROCS(viper.GetInt("base.maxproc"))
+
 	log.LoadConfiguration(viper.GetString("base.log"))
 	defer log.Close()
 
@@ -58,10 +59,6 @@ func main() {
 	if err := initDb(); err != nil {
 		panic(err)
 	}
-
-	// test_insert_db()
-	// test_update_db()
-	// test_select_db()
 
 	common.InitSignal()
 }
