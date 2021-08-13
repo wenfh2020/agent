@@ -46,8 +46,8 @@ const (
 	salt   = "fkja98374dsf%$^#DFGDS%@@@SDFdrgt"
 )
 
-func AgentCheck(w http.ResponseWriter, r *http.Request) {
-	log.Trace("proto: AgentCheck")
+func HttpReqAgentCheck(w http.ResponseWriter, r *http.Request) {
+	log.Trace("proto: HttpReqAgentCheck")
 
 	var (
 		errno int

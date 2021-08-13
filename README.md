@@ -77,3 +77,9 @@ go run client/client.go
 # server
 go run main.go
 ```
+
+---
+
+## 4. references
+
+* [简单的 http 通信校验（golang）](https://wenfh2020.com/2021/08/10/agent/)

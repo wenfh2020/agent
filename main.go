@@ -19,26 +19,24 @@ func initConfig() error {
 
 func initDb() error {
 	mysql.InitDbMgr()
-	config := viper.Sub("mysql.mysql_lhl_product")
-	return mysql.AddDbInfo("mysql_lhl_product", config.GetString("url"),
-		config.GetInt("max_idle_conn"), config.GetInt("max_open_conn"))
+	cf := viper.Sub("mysql.mysql_lhl_product")
+	return mysql.AddDbInfo("mysql_lhl_product", cf.GetString("url"),
+		cf.GetInt("max_idle_conn"), cf.GetInt("max_open_conn"))
 }
 
 func initHTTP() error {
-	log.Trace("InitHTTP %v", viper.GetString("net.http.addrs"))
+	mux := http.NewServeMux()
+	mux.HandleFunc("/product/agent/check", proto.HttpReqAgentCheck)
 
-	httpServerMux := http.NewServeMux()
-	httpServerMux.HandleFunc("/product/agent/check", proto.AgentCheck)
-
-	log.Info("start http listen:\"%s\"", viper.GetString("net.http.addrs"))
-
-	network, addr, err := inet.ParseNetwork(viper.GetString("net.http.addrs"))
+	addrs := viper.GetString("net.http.addrs")
+	network, addr, err := inet.ParseNetwork(addrs)
 	if err != nil {
-		log.Error("ParseNetwork() error(%v)", err)
+		log.Error("parse http addrs error! err: %v", err)
 		return err
 	}
 
-	go inet.HttpListen(httpServerMux, network, addr)
+	log.Info("start http listen: \"%s\"", addrs)
+	go inet.HttpListen(mux, network, addr)
 	return nil
 }
 
@@ -48,7 +46,6 @@ func main() {
 	}
 
 	runtime.GOMAXPROCS(viper.GetInt("base.maxproc"))
-
 	log.LoadConfiguration(viper.GetString("base.log"))
 	defer log.Close()
 
