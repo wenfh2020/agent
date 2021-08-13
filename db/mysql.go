@@ -2,9 +2,10 @@ package db
 
 import (
 	"errors"
-	"github.com/jinzhu/gorm"
 	"sync"
 	"time"
+
+	"github.com/jinzhu/gorm"
 
 	_ "github.com/go-sql-driver/mysql"
 	log "github.com/thinkboy/log4go"
@@ -64,7 +65,7 @@ func AddDbInfo(name, url string, maxIdleConn, maxOpenConn int) error {
 		return ErrInvalidDbParams
 	}
 
-	log.Info("insert db info, name: %v, url: %v, max-idle-conn: %v, max-open-conn: %v",
+	log.Info("insert db info, name: %v, url: %v, max_idle_conn: %v, max_open_conn: %v",
 		name, url, maxIdleConn, maxOpenConn)
 
 	dbi := &DbInfo{

@@ -11,5 +11,5 @@ net:
 mysql:
   mysql_lhl_product:
     url: root:root123!@#@tcp(127.0.0.1:3306)/lhl_product?parseTime=True&loc=Local&multiStatements=true&charset=utf8&timeout=20s
-    max-idle-conn: 2
-    max-open-conn: 2
+    max_idle_conn: 2
+    max_open_conn: 2
