@@ -73,6 +73,7 @@ func HttpReqAgentCheck(w http.ResponseWriter, r *http.Request) {
 	log.Debug("\nsign:  %X\nsign2: %X\n", sign, sign2)
 
 	if strings.Compare(sign, sign2) != 0 {
+		log.Error("invalid sign! \nmac: %v, \nsign:  %X\nsign2: %X\n", mac, sign, sign2)
 		errno = common.ERR_INVALID_SIGN
 		return
 	}
@@ -88,6 +89,7 @@ func HttpReqAgentCheck(w http.ResponseWriter, r *http.Request) {
 
 	db, err := mysql.GetDB("mysql_lhl_product")
 	if err != nil {
+		log.Error("get db conn failed! db name: %s, err: %v", "mysql_lhl_product", err)
 		errno = common.ERR_INVALID_DATA
 		return
 	}
@@ -123,18 +125,20 @@ func HttpReqAgentCheck(w http.ResponseWriter, r *http.Request) {
 
 		/* update db activation. */
 		tx := db.Begin()
-		update := map[string]interface{}{
-			"activation": actmd5,
-		}
+		update := map[string]interface{}{"activation": actmd5}
 		if err = tx.Model(&info).Where("device_mac = ?", mac).Updates(update).Error; err != nil {
+			log.Error("update device info failed! err: %v", err)
 			errno = common.ERR_DB_UPDATE_FAILED
 			return
 		}
 		if err = tx.Commit().Error; err != nil {
+			log.Error("update device info failed! err: %v", err)
 			tx.Rollback()
 			errno = common.ERR_DB_UPDATE_FAILED
 			return
 		}
+
+		log.Info("update activation, mac: %s, activation: %s", mac, activation)
 	} else {
 		/* aes encrypt. */
 		encrypt, _ := common.AesCBCEncrypt([]byte(activation), []byte(aesKey))

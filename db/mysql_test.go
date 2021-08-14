@@ -46,6 +46,7 @@ func TestDbInsert(t *testing.T) {
 	db, err := getDB("mysql_lhl_product")
 	if err != nil || db == nil {
 		t.Errorf("get db failed! err: %v", err)
+		return
 	}
 
 	info := &mysql.DeviceInfo{
@@ -62,6 +63,7 @@ func TestDbInsert(t *testing.T) {
 
 	if err = db.Create(&info).Error; err != nil {
 		t.Errorf("insert db record failed! err: %v", err)
+		return
 	}
 }
 
@@ -69,26 +71,26 @@ func TestDbUpdate(t *testing.T) {
 	db, err := getDB("mysql_lhl_product")
 	if err != nil {
 		t.Errorf("get db failed! err: %v", err)
+		return
 	}
 
 	var info mysql.DeviceInfo
 	device := "XX-XX-XX-XX-XX-XX"
+
 	tx := db.Begin()
-
-	update := map[string]interface{}{
-		"status": 0,
-	}
-
+	update := map[string]interface{}{"status": 0}
 	err = tx.Model(&info).Where("device_mac = ?", device).Updates(update).Error
 	if err != nil {
 		tx.Rollback()
 		t.Errorf("update db failed! err: %v", err)
+		return
 	}
 
 	err = tx.Commit().Error
 	if err != nil {
 		tx.Rollback()
 		t.Errorf("update db commit failed! err: %v", err)
+		return
 	}
 }
 
@@ -96,6 +98,7 @@ func TestDbSelect(t *testing.T) {
 	db, err := getDB("mysql_lhl_product")
 	if err != nil {
 		t.Errorf("get db failed! err: %v", err)
+		return
 	}
 
 	var info mysql.DeviceInfo
@@ -103,5 +106,6 @@ func TestDbSelect(t *testing.T) {
 
 	if err = db.Where("device_mac = ?", device).Find(&info).Error; err != nil {
 		t.Errorf("select db failed! err: %v", err)
+		return
 	}
 }
