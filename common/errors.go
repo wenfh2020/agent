@@ -8,6 +8,7 @@ const (
 	ERR_DB_NO_RECORD
 	ERR_DB_UPDATE_FAILED
 	ERR_INVALID_STATUS
+	ERR_DECODE_FAILED
 )
 
 func GetCodeMsg(code int) string {
@@ -26,6 +27,8 @@ func GetCodeMsg(code int) string {
 		return "invalid status"
 	case ERR_DB_UPDATE_FAILED:
 		return "update db failed"
+	case ERR_DECODE_FAILED:
+		return "decode failed"
 	}
 	return "unkown error"
 }

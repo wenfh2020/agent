@@ -80,7 +80,7 @@ func main() {
 	sign = ack.Sign
 	mac = ack.Device.Mac
 	sign2 := common.SignEncode(salt, mac, time)
-	fmt.Printf("\nsign:  %X\nsign2: %X\n", sign, sign2)
+	fmt.Printf("\nsign hex:  %X\nsign2 hex: %X\n", sign, sign2)
 
 	if strings.Compare(sign, sign2) != 0 {
 		fmt.Println("invalid sign")

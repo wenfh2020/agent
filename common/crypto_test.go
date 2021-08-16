@@ -10,7 +10,7 @@ import (
 func TestMd5(t *testing.T) {
 	src := "1234"
 	dst := "81dc9bdb52d04dc20036dbd8313ed055"
-	md5data := fmt.Sprintf("%x", common.Md5String(src))
+	md5data := fmt.Sprintf("%X", common.Md5String(src))
 	if strings.Compare(md5data, dst) != 0 {
 		t.Errorf("invalid md5! md5data: %s, dst: %s", md5data, dst)
 	}

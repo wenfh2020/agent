@@ -95,17 +95,18 @@ func SignEncode(salt, mac, time string) string {
 	fmt.Printf("format src str: %s\n", format)
 
 	/* md5 */
-	md5data := fmt.Sprintf("%x", Md5String(format))
-	fmt.Printf("md5 str: %s\n", md5data)
+	md5data := fmt.Sprintf("%X", Md5String(format))
+	fmt.Printf("md5 hex: %s\n", md5data)
 
 	/* hash */
-	hdata := string(Sha1Encode(md5data))
-	fmt.Printf("sha-1 encode str: %s\n", hdata)
+	hdata := fmt.Sprintf("%X", Sha1Encode(md5data))
+	fmt.Printf("sha-1 encode hex: %s\n", hdata)
 
 	/* base64 encode */
 	b64data := Base64Encode(hdata)
 	fmt.Printf("base64 encode str: %s\n", b64data)
 	fmt.Printf("*sign str: %s\n", b64data)
 	fmt.Println("===========================")
+
 	return b64data
 }
